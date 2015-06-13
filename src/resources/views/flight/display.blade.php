@@ -26,5 +26,20 @@
                 </tr>--}}
             </table>
         </div>
+
+        <div class="col-md-6">
+            <span id="ajax-price-list">&&<br/>Loading prices...</span>
+        </div>
     </div>
 @endforeach
+
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#ajax-price-list').load("{{ route('ota.flight.load_price') }}", {
+            "d": "{{ $d }}",
+            "_token": "{{ csrf_token() }}"
+        });
+    });
+</script>

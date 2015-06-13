@@ -9,6 +9,7 @@ namespace mamorunl\OTA\Models;
 
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Config;
 
 class OTAToDataFormatter
 {
@@ -31,6 +32,23 @@ class OTAToDataFormatter
             $data[0]['seats_free'][$row_data->ResBookDesigCode] = $row_data->ResBookDesigQuantity;
         }
 
-        return $data;
+        return $this->encryptForAvailability($data);
+    }
+
+    public function encryptForAvailability($data)
+    {
+        $flight_data = json_encode($data);
+        $encrypted_data = urlencode(base64_encode(mcrypt_encrypt(MCRYPT_BLOWFISH, Config::get('app.key'), $flight_data,
+            MCRYPT_MODE_ECB)));
+
+        return $encrypted_data;
+    }
+    public function decryptForAvailability($data)
+    {
+        $encrypted_data = base64_decode(urldecode($data));
+        $decrypted_data = json_decode(mcrypt_decrypt(MCRYPT_BLOWFISH, Config::get('app.key'), $encrypted_data, MCRYPT_MODE_ECB),
+            true);
+
+        return $decrypted_data;
     }
 }

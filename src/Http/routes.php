@@ -19,3 +19,13 @@ $router->get('flight/result', [
     'as'   => 'ota.flight.display_result',
     'uses' => 'OTAFlightController@result'
 ]);
+
+$router->post('flight/price', [
+    'as'   => 'ota.flight.load_price',
+    'uses' => 'OTAAjaxFlightController@priceListPerRow'
+]);
+
+$router->get('flight/book', [
+    'as'   => 'ota.flight.book',
+    'uses' => 'OTAFlightController@book'
+]);

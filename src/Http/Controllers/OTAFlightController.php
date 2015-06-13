@@ -10,10 +10,10 @@ namespace mamorunl\OTA\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 use mamorunl\OTA\Facades\DataToOTAFormatter;
 use mamorunl\OTA\Facades\OTA;
+use mamorunl\OTA\Facades\OTAToDataFormatter;
 use mamorunl\OTA\Models\OTAConnection;
 
 class OTAFlightController extends Controller
@@ -45,10 +45,7 @@ class OTAFlightController extends Controller
             ]
         ];
 
-        $flight_data = json_encode(OTA::availability($ota_connection,
-            DataToOTAFormatter::forAvailability($request_data)));
-        $encrypted_data = urlencode(base64_encode(mcrypt_encrypt(MCRYPT_BLOWFISH, Config::get('app.key'), $flight_data,
-            MCRYPT_MODE_ECB)));
+        $encrypted_data = OTA::availability($ota_connection, DataToOTAFormatter::forAvailability($request_data));
 
         return Redirect::route('ota.flight.display_result', ['d' => $encrypted_data]);
     }
@@ -57,12 +54,24 @@ class OTAFlightController extends Controller
      * Display the result from the search
      *
      * @param Request $request
+     *
+     * @return \Illuminate\View\View
      */
     public function result(Request $request)
     {
-        $encrypted_data = base64_decode(urldecode($request->get('d')));
-        $data = json_decode(mcrypt_decrypt(MCRYPT_BLOWFISH, Config::get('app.key'), $encrypted_data, MCRYPT_MODE_ECB), true);
+        $data = OTAToDataFormatter::decryptForAvailability($request->get('d'));
 
-        return view('mamorunl-ota::flight.display', ['flights' => $data]);
+        return view('mamorunl-ota::flight.display', ['flights' => $data, 'd' => $request->get('d')]);
+    }
+
+    /**
+     * Display the order form for the booking
+     *
+     * @param Request $request
+     */
+    public function book(Request $request)
+    {
+        $data = OTAToDataFormatter::decryptForAvailability($request->get('d'));
+        dd($data);
     }
 }
