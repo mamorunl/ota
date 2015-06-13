@@ -61,8 +61,8 @@ class OTAFlightController extends Controller
     public function result(Request $request)
     {
         $encrypted_data = base64_decode(urldecode($request->get('d')));
-        $data = json_decode(mcrypt_decrypt(MCRYPT_BLOWFISH, Config::get('app.key'), $encrypted_data, MCRYPT_MODE_ECB));
+        $data = json_decode(mcrypt_decrypt(MCRYPT_BLOWFISH, Config::get('app.key'), $encrypted_data, MCRYPT_MODE_ECB), true);
 
-        return view('mamorunl-ota::flight.display', ['flight' => $data]);
+        return view('mamorunl-ota::flight.display', ['flights' => $data]);
     }
 }
