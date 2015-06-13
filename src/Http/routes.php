@@ -14,3 +14,8 @@ $router->post('flight/search', [
     'as'   => 'ota.flight.search',
     'uses' => 'OTAFlightController@postSearch'
 ]);
+
+$router->get('flight/result', [
+    'as'   => 'ota.flight.display_result',
+    'uses' => 'OTAFlightController@result'
+]);
