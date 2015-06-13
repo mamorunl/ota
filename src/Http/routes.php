@@ -7,10 +7,10 @@
 
 $router->get('flight/search', [
     'as'   => 'ota.flight.search',
-    'uses' => 'OTAController@searchFlight'
+    'uses' => 'OTAFlightController@search'
 ]);
 
 $router->post('flight/search', [
     'as'   => 'ota.flight.search',
-    'uses' => 'OTAController@postSearchFlight'
+    'uses' => 'OTAFlightController@postSearch'
 ]);
