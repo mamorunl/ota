@@ -10,7 +10,12 @@ namespace mamorunl\OTA\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
-class OTAFlightController extends Controller {
+class OTAFlightController extends Controller
+{
+    /**
+     * Displays the form to search for a flight
+     * @return \Illuminate\View\View
+     */
     public function search()
     {
         return view('mamorunl-ota::flight.search');
