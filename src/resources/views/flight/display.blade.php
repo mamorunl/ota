@@ -1,4 +1,4 @@
-@foreach($flights as $flight)
+@foreach($flights as $id => $flight)
     <h2>{{ trans('mamorunl-ota::flight.display.flight_information') }} {{ $flight['airline_code'] }} {{ $flight['flight_number'] }}: {{ $flight['date_departure'] }}</h2>
     <div class="row">
         <div class="col-md-6">
@@ -28,7 +28,7 @@
         </div>
 
         <div class="col-md-6">
-            <span id="ajax-price-list">&&<br/>Loading prices...</span>
+            <span class="ajax-price-list" data-flight_id="{{ $id }}">&&<br/>Loading prices...</span>
         </div>
     </div>
 @endforeach
@@ -37,9 +37,12 @@
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#ajax-price-list').load("{{ route('ota.flight.load_price') }}", {
-            "d": "{{ $d }}",
-            "_token": "{{ csrf_token() }}"
+        $('.ajax-price-list').each(function() {
+            $(this).load("{{ route('ota.flight.load_price') }}", {
+                "d": "{{ $d }}",
+                "flight_id": $(this).data('flight_id'),
+                "_token": "{{ csrf_token() }}"
+            });
         });
     });
 </script>
