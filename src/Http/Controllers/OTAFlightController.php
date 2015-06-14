@@ -133,6 +133,8 @@ class OTAFlightController extends Controller
 
                 $infants = $this->generatePerson('infant', $request, $booking, $person_data);
 
+                // @TODO: Write flight details
+                // @TODO: Write correct price
                 Mail::send('mamorunl-ota::flight.emails.book',
                     ['booking' => $booking, 'adults' => $adults, 'children' => $children, 'infants' => $infants],
                     function ($message) use ($adults) {

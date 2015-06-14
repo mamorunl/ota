@@ -25,7 +25,7 @@ Your booking details are as follows:<br>
     </table>
 @endforeach
 
-Your total price is &euro; 5<br>
+Your total price is &euro; {{ $flight_data['price'] }}<br>
 <br>
 Please transfer the money by bank to NL26 INGB 099999999 in name of HOLIDAYLAUNCH BV, Enschede The Netherlands. In your description, please note the following number: {{ $booking->created_at->format('U') . "-" . $booking->id . "-" . $booking->flight_number }}<br>
 <br>

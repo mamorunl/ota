@@ -10,10 +10,19 @@ namespace mamorunl\OTA\Models;
 
 use mamorunl\OTA\Facades\OTAToDataFormatter;
 
-class OTAHandler {
+class OTAHandler
+{
     public function availability(OTAConnection $connection, $data)
     {
         $client = $connection->getConnection();
+
         return OTAToDataFormatter::forAvailability($client->Availability($data));
+    }
+
+    public function fareDisplay(OTAConnection $connection, $data, $flight_data)
+    {
+        $client = $connection->getConnection();
+
+        return OTAToDataFormatter::forFareDisplay($client->FareDisplay($data), $flight_data);
     }
 }

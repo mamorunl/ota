@@ -8,6 +8,9 @@
 namespace mamorunl\OTA\Models;
 
 
+use Carbon\Carbon;
+use stdClass;
+
 class DataToOTAFormatter
 {
     public function forAvailability($data)
@@ -67,6 +70,62 @@ class DataToOTAFormatter
             }
             $request['TravelerInfoSummary']['AirTravelerAvail']['temp'] = "String";
         }
+
+        return $request;
+    }
+
+    public function forFareDisplay($flight_data)
+    {
+        $request['POS'] = [];
+        $newClass = new StdClass;
+        $newClass->requestorID = [
+            "_" => '',
+            "id" => 1,
+            "type" => 1,
+            "url" => 1
+        ];
+        $newClass->BookingChannel = [
+            "_" => '',
+            "Primary" => 1,
+            "Type" => 1
+        ];
+        $request['POS']['Source'] = [
+            'isoCurrency' => 'EUR',
+            'isoCountry' => 'TR',
+            'RequestorID' => [
+                "_" => '',
+                'id' => 1,
+                'type' => 1,
+                'url' => 1
+            ],
+            'BookingChannel' => [
+                "_" => '',
+                'Primary' => 1,
+                'Type' => 1
+            ]
+        ];
+
+        $date_departure = Carbon::createFromFormat('Y-m-d H:i:s', $flight_data['date_departure'])->toDateString();
+        $request['OriginDestinationInformation'] = [
+            "DepartureDateTime" => $date_departure,
+            "OriginLocation" => [
+                "_" => '',
+                "LocationCode" => $flight_data['airport_from']
+            ],
+            "DestinationLocation" => [
+                "_" => "",
+                "LocationCode" => $flight_data['airport_to']
+            ]
+        ];
+
+        $request['SpecificFlightInfo'] = [
+            "FlightNumber" => $flight_data['flight_number'],
+            "BookingClassPref" =>
+                [
+                    "_" => "",
+                    "ResBookDesigCode" => "1"
+                ]
+        ];
 
         return $request;
     }
