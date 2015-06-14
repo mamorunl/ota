@@ -6,6 +6,16 @@
             <h3>@lang('mamorunl-ota::flight.book.adult') {{ $i+1 }}</h3>
             @include('mamorunl-ota::flight._bookingPerson', ['type' => 'adult', 'index' => $i])
         @endfor
+
+        @for($i = 0; $i < $person_data['num_children']; $i++)
+            <h3>@lang('mamorunl-ota::flight.book.child') {{ $i+1 }}</h3>
+            @include('mamorunl-ota::flight._bookingPerson', ['type' => 'child', 'index' => $i])
+        @endfor
+
+        @for($i = 0; $i < $person_data['num_infants']; $i++)
+            <h3>@lang('mamorunl-ota::flight.book.infant') {{ $i+1 }}</h3>
+            @include('mamorunl-ota::flight._bookingPerson', ['type' => 'infant', 'index' => $i])
+        @endfor
     </div>
 
     <div class="col-md-4">

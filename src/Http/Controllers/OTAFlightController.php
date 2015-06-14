@@ -106,13 +106,13 @@ class OTAFlightController extends Controller
         $validator->each('phone_adult', ['required']);
         $validator->each('emailaddress_adult', ['required']);
 
-        if (isset($person_data['children']) && $person_data['children'] > 0) {
+        if (isset($person_data['num_children']) && $person_data['num_children'] > 0) {
             $validator->each('first_name_child', ['required']);
             $validator->each('last_name_child', ['required']);
             $validator->each('dateofbirth_child', ['required']);
         }
 
-        if (isset($person_data['infants']) && $person_data['infants'] > 0) {
+        if (isset($person_data['num_infants']) && $person_data['num_infants'] > 0) {
             $validator->each('first_name_infant', ['required']);
             $validator->each('last_name_infant', ['required']);
             $validator->each('dateofbirth_infant', ['required']);
@@ -132,11 +132,14 @@ class OTAFlightController extends Controller
                 $children = $this->generatePerson('child', $request, $booking, $person_data);
 
                 $infants = $this->generatePerson('infant', $request, $booking, $person_data);
-
                 // @TODO: Write flight details
-                // @TODO: Write correct price
                 Mail::send('mamorunl-ota::flight.emails.book',
-                    ['booking' => $booking, 'adults' => $adults, 'children' => $children, 'infants' => $infants],
+                    ['booking'     => $booking,
+                     'adults'      => $adults,
+                     'children'    => $children,
+                     'infants'     => $infants,
+                     'flight_data' => $flight_data
+                    ],
                     function ($message) use ($adults) {
                         $message->to($adults[0]->email, $adults[0]->first_name . " " . $adults[0]->last_name);
                         $message->subject(trans('mamorunl-ota::flight.book.email.subject'));
@@ -156,8 +159,14 @@ class OTAFlightController extends Controller
     private function generatePerson($person_type, $request, $booking, $person_data)
     {
         $persons = [];
-        if (isset($person_data['num_' . $person_type . 's'])) {
-            for ($i = 0; $i < ($person_data['num_' . $person_type . 's']); $i++) {
+        if ($person_type == "child") {
+            $multiple = "children";
+        } else {
+            $multiple = $person_type . "s";
+        }
+
+        if (isset($person_data['num_' . $multiple])) {
+            for ($i = 0; $i < ($person_data['num_' . $multiple]); $i++) {
                 $person_data_generated = $this->generatePersonData($request, $i, $booking, $person_type);
 
                 $persons[] = Person::create($person_data_generated);

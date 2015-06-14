@@ -4,7 +4,7 @@
     <div class="col-md-2">
         <div class="form-group @if($errors->has('gender_' . $type . '.' . $index)) has-error @endif">
             {!! Form::label('gender_' . $type, trans('mamorunl-ota::flight.book.fields.gender')) !!}
-            {!! Form::select('gender_' . $type . '[' . $index . ']', [0 => trans('mamorunl-ota::flight.mr'), 1 => trans('mamorunl-ota::flight.mrs')], null, ['class' => 'form-control']) !!}
+            {!! Form::select('gender_' . $type . '[' . $index . ']', [1 => trans('mamorunl-ota::flight.mr'), 0 => trans('mamorunl-ota::flight.mrs')], null, ['class' => 'form-control']) !!}
             @if($errors->has('gender' . $type . '.' . $index))
                 <div class="help-block">
                     {!! $errors->first('gender_' . $type . '.' . $index) !!}

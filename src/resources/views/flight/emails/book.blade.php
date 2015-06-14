@@ -3,29 +3,51 @@ Dear {{ ($adults[0]->gender == 1) ? trans('mamorunl-ota::flight.mr') : trans('ma
 Thank you for booking with HolidayLaunch!<br>
 <br>
 Your booking details are as follows:<br>
+
+<h1>Flight information</h1>
+<table>
+    <tr>
+        <td>You are flying from</td>
+        <td>{{ $booking->airport_from }} at {{ $booking->date_departure }}</td>
+    </tr>
+    <tr>
+        <td>You are arriving at</td>
+        <td>{{ $booking->airport_to }} at {{ $booking->date_arrival }}</td>
+    </tr>
+    <tr>
+        <td>Your flight number is</td>
+        <td>{{ $booking->airline_code }}{{ $booking->flight_number }}</td>
+    </tr>
+    <tr>
+        <td>You are sitting in row</td>
+        <td>{{ $booking->row_letter }}</td>
+    </tr>
+    <tr>
+        <td>The total price is</td>
+        <td>&euro; {{ number_format($flight_data['price'], 2, ",", ".") }}</td>
+    </tr>
+</table>
+
+<h1>The people you have booked tickets for</h1>
 <h2>Adults</h2>
-@foreach($adults as $adult)
-    <table>
-        <tr>
-            <td>Full name</td>
-            <td>{{ ($adult->gender == 0) ? trans('mamorunl-ota::flight.mr') : trans('mamorunl-ota::flight.mrs') }} {{ $adult->first_name }} {{ $adult->last_name }}</td>
-        </tr>
-        <tr>
-            <td>Phone number</td>
-            <td>{{ $adult->area_code }}{{ $adult->city_code }} {{ $adult->phone }}</td>
-        </tr>
-        <tr>
-            <td>Email address</td>
-            <td>{{ $adult->email }}</td>
-        </tr>
-        <tr>
-            <td>Date of birth</td>
-            <td>{{ $adult->date_of_birth }}</td>
-        </tr>
-    </table>
+@foreach($adults as $person_data)
+    @include('mamorunl-ota::flight.emails._personPart', ['type' => 'adult', 'data' => $person_data])
 @endforeach
 
-Your total price is &euro; {{ $flight_data['price'] }}<br>
+@if(count($children) > 0)
+    <h2>Children</h2>
+    @foreach($children as $person_data)
+        @include('mamorunl-ota::flight.emails._personPart', ['type' => 'child', 'data' => $person_data])
+    @endforeach
+@endif
+
+@if(count($infants) > 0)
+    <h2>Infants</h2>
+    @foreach($infants as $person_data)
+        @include('mamorunl-ota::flight.emails._personPart', ['type' => 'infant', 'data' => $person_data])
+    @endforeach
+@endif
+<br>
 <br>
 Please transfer the money by bank to NL26 INGB 099999999 in name of HOLIDAYLAUNCH BV, Enschede The Netherlands. In your description, please note the following number: {{ $booking->created_at->format('U') . "-" . $booking->id . "-" . $booking->flight_number }}<br>
 <br>
