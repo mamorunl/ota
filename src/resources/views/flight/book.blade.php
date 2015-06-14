@@ -1,4 +1,4 @@
-{!! Form::open(['method' => 'post', 'route' => [
+{!! Form::open(['method' => 'post', 'route' => ['ota.flight.handle-booking', 'd' => $d, 't' => $t]]) !!}
 <div class="row">
     <div class="col-md-8">
         <h2>@lang('mamorunl-ota::flight.book.person_data')</h2>
@@ -75,3 +75,6 @@
         </div>
     </div>
 </div>
+
+<button type="submit" class="btn btn-primary">@lang('mamorunl-ota::flight.buttons.book')</button>
+{!! Form::close() !!}

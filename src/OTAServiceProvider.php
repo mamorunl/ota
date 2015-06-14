@@ -51,7 +51,8 @@ class OTAServiceProvider extends ServiceProvider
     protected function setupPublishers()
     {
         $this->publishes([
-            realpath(__DIR__ . '/config/providers.php') => config_path('providers.php')
+            realpath(__DIR__ . '/config/providers.php') => config_path('providers.php'),
+            realpath(__DIR__ . '/database/migrations') => database_path() . '/migrations'
         ]);
     }
 

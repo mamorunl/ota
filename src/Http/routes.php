@@ -29,3 +29,8 @@ $router->get('flight/book', [
     'as'   => 'ota.flight.book',
     'uses' => 'OTAFlightController@book'
 ]);
+
+$router->post('flight/book', [
+    'as' => 'ota.flight.handle-booking',
+    'uses' => 'OTAFlightController@handleBooking'
+]);
