@@ -14,14 +14,19 @@ use mamorunl\OTA\Facades\OTAToDataFormatter;
 
 class OTAAjaxFlightController extends Controller
 {
+    /**
+     * Display the price list for this flight
+     *
+     * @param Request $request
+     */
     public function priceListPerRow(Request $request)
     {
-        $decrypted_data = OTAToDataFormatter::decryptForAvailability($request->get('d'));
+        $decrypted_data = OTAToDataFormatter::decryptFromURL($request->get('d'));
         $decrypted_data = $decrypted_data[(int)$request->get('flight_id')];
         $rows = $decrypted_data['seats_free'];
         foreach ($rows as $row => $seats) {
             $price = ord(strtolower($row)) - 96;
-            $new_data = OTAToDataFormatter::encryptForAvailability($decrypted_data + ['price' => $price]);
+            $new_data = OTAToDataFormatter::encryptFromURL($decrypted_data + ['price' => $price]);
             echo "<div>" . $row . ": " . $seats . " free - &euro; " . $price . ".00 <a href=\"" . route('ota.flight.book',
                     ['d' => $new_data]) . "\">BOOK NOW</a></div>";
         }

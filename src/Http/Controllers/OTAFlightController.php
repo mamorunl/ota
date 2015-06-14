@@ -59,7 +59,7 @@ class OTAFlightController extends Controller
      */
     public function result(Request $request)
     {
-        $data = OTAToDataFormatter::decryptForAvailability($request->get('d'));
+        $data = OTAToDataFormatter::decryptFromURL($request->get('d'));
 
         return view('mamorunl-ota::flight.display', ['flights' => $data, 'd' => $request->get('d')]);
     }
@@ -71,7 +71,7 @@ class OTAFlightController extends Controller
      */
     public function book(Request $request)
     {
-        $data = OTAToDataFormatter::decryptForAvailability($request->get('d'));
+        $data = OTAToDataFormatter::decryptFromURL($request->get('d'));
         dd($data);
     }
 }

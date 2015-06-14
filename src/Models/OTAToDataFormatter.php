@@ -32,10 +32,10 @@ class OTAToDataFormatter
             $data[0]['seats_free'][$row_data->ResBookDesigCode] = $row_data->ResBookDesigQuantity;
         }
 
-        return $this->encryptForAvailability($data);
+        return $this->encryptFromURL($data);
     }
 
-    public function encryptForAvailability($data)
+    public function encryptFromURL($data)
     {
         $flight_data = json_encode($data);
         $encrypted_data = urlencode(base64_encode(mcrypt_encrypt(MCRYPT_BLOWFISH, Config::get('app.key'), $flight_data,
@@ -43,7 +43,7 @@ class OTAToDataFormatter
 
         return $encrypted_data;
     }
-    public function decryptForAvailability($data)
+    public function decryptFromURL($data)
     {
         $encrypted_data = base64_decode(urldecode($data));
         $decrypted_data = json_decode(mcrypt_decrypt(MCRYPT_BLOWFISH, Config::get('app.key'), $encrypted_data, MCRYPT_MODE_ECB),
