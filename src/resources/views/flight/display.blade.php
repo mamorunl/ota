@@ -40,6 +40,7 @@
         $('.ajax-price-list').each(function() {
             $(this).load("{{ route('ota.flight.load_price') }}", {
                 "d": "{{ $d }}",
+                "t": "{{ $t }}",
                 "flight_id": $(this).data('flight_id'),
                 "_token": "{{ csrf_token() }}"
             });

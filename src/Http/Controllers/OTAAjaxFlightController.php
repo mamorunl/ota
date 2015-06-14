@@ -26,9 +26,9 @@ class OTAAjaxFlightController extends Controller
         $rows = $decrypted_data['seats_free'];
         foreach ($rows as $row => $seats) {
             $price = ord(strtolower($row)) - 96;
-            $new_data = OTAToDataFormatter::encryptFromURL($decrypted_data + ['price' => $price]);
+            $new_data = OTAToDataFormatter::encryptFromURL($decrypted_data + ['price' => $price, 'row_letter' => $row]);
             echo "<div>" . $row . ": " . $seats . " free - &euro; " . $price . ".00 <a href=\"" . route('ota.flight.book',
-                    ['d' => $new_data]) . "\">BOOK NOW</a></div>";
+                    ['d' => $new_data, 't' => $request->get('t')]) . "\">BOOK NOW</a></div>";
         }
     }
 }

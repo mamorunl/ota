@@ -47,7 +47,7 @@ class OTAFlightController extends Controller
 
         $encrypted_data = OTA::availability($ota_connection, DataToOTAFormatter::forAvailability($request_data));
 
-        return Redirect::route('ota.flight.display_result', ['d' => $encrypted_data]);
+        return Redirect::route('ota.flight.display_result', ['d' => $encrypted_data, 't' => OTAToDataFormatter::encryptFromURL($request_data)]);
     }
 
     /**
@@ -61,17 +61,21 @@ class OTAFlightController extends Controller
     {
         $data = OTAToDataFormatter::decryptFromURL($request->get('d'));
 
-        return view('mamorunl-ota::flight.display', ['flights' => $data, 'd' => $request->get('d')]);
+        return view('mamorunl-ota::flight.display', ['flights' => $data, 'd' => $request->get('d'), 't' => $request->get('t')]);
     }
 
     /**
      * Display the order form for the booking
      *
      * @param Request $request
+     *
+     * @return \Illuminate\View\View
      */
     public function book(Request $request)
     {
-        $data = OTAToDataFormatter::decryptFromURL($request->get('d'));
-        dd($data);
+        $flight_data = OTAToDataFormatter::decryptFromURL($request->get('d'));
+        $person_data = OTAToDataFormatter::decryptFromURL($request->get('t'));
+
+        return view('mamorunl-ota::flight.book', ['flight_data' => $flight_data, 'person_data' => $person_data]);
     }
 }
