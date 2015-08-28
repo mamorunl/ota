@@ -127,6 +127,10 @@ class OTAFlightController extends Controller
             DB::transaction(function () use ($request, $person_data, $flight_data) {
                 $booking = Booking::create($flight_data);
 
+                $ota_connection = new OTAConnection('onur');
+
+                OTA::booking($ota_connection, DataToOTAFormatter::forBooking());
+
                 $adults = $this->generatePerson('adult', $request, $booking, $person_data);
 
                 $children = $this->generatePerson('child', $request, $booking, $person_data);
@@ -148,6 +152,9 @@ class OTAFlightController extends Controller
 
             });
         } catch (Exception $e) {
+            die();
+            echo $e->getMessage();
+            dd($e->getTrace());
             return Redirect::back()
                 ->withInput();
         }

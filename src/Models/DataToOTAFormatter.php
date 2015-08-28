@@ -79,54 +79,198 @@ class DataToOTAFormatter
         $request['POS'] = [];
         $newClass = new StdClass;
         $newClass->requestorID = [
-            "_" => '',
-            "id" => 1,
+            "_"    => '',
+            "id"   => 1,
             "type" => 1,
-            "url" => 1
+            "url"  => 1
         ];
         $newClass->BookingChannel = [
-            "_" => '',
+            "_"       => '',
             "Primary" => 1,
-            "Type" => 1
+            "Type"    => 1
         ];
         $request['POS']['Source'] = [
-            'isoCurrency' => 'EUR',
-            'isoCountry' => 'TR',
-            'RequestorID' => [
-                "_" => '',
-                'id' => 1,
+            'isoCurrency'    => 'EUR',
+            'isoCountry'     => 'TR',
+            'RequestorID'    => [
+                "_"    => '',
+                'id'   => 1,
                 'type' => 1,
-                'url' => 1
+                'url'  => 1
             ],
             'BookingChannel' => [
-                "_" => '',
+                "_"       => '',
                 'Primary' => 1,
-                'Type' => 1
+                'Type'    => 1
             ]
         ];
 
-        $date_departure = Carbon::createFromFormat('Y-m-d H:i:s', $flight_data['date_departure'])->toDateString();
+        $date_departure = Carbon::createFromFormat('Y-m-d H:i:s', $flight_data['date_departure'])
+            ->toDateString();
         $request['OriginDestinationInformation'] = [
-            "DepartureDateTime" => $date_departure,
-            "OriginLocation" => [
-                "_" => '',
+            "DepartureDateTime"   => $date_departure,
+            "OriginLocation"      => [
+                "_"            => '',
                 "LocationCode" => $flight_data['airport_from']
             ],
             "DestinationLocation" => [
-                "_" => "",
+                "_"            => "",
                 "LocationCode" => $flight_data['airport_to']
             ]
         ];
 
         $request['SpecificFlightInfo'] = [
-            "FlightNumber" => $flight_data['flight_number'],
+            "FlightNumber"     => $flight_data['flight_number'],
             "BookingClassPref" =>
                 [
-                    "_" => "",
+                    "_"                => "",
                     "ResBookDesigCode" => "1"
                 ]
         ];
 
         return $request;
+    }
+
+    public function forBooking()
+    {
+        $request['POS'] = [];
+        $request['POS']['Source'] = [
+            'isoCurrency'    => 'EUR',
+            'isoCountry'     => 'TR',
+            'agentSine'      => 'BSIA1234PM',
+            'RequestorID'    => [
+                "_"    => '',
+                'id'   => 1,
+                'type' => 1,
+                'url'  => 1
+            ],
+            'BookingChannel' => [
+                "_"       => '',
+                'Primary' => 1,
+                'Type'    => 1
+            ]
+        ];
+
+        $request['AirItinerary'] = [];
+        $request['AirItinerary']['DirectionInd'] = 1;
+        $request['AirItinerary']['OriginDestinationOptions'] = [];
+        $flightSegment = [
+            'FlightSegment' => [
+                //'_'                 => [
+                'DepartureAirport'  => [
+                    '_'            => '',
+                    'LocationCode' => 'AMS' //
+                ],
+                'ArrivalAirport'    => [
+                    '_'            => '',
+                    'LocationCode' => 'IST' //
+                ],
+                'Equipment'         => [
+                    '_'             => '',
+                    'ChangeofGauge' => 'N',
+                    'AirEquipType'  => 6
+                ],
+                'MarkettingAirline' => [
+                    '_'                => [
+                        'Meal' => 'String'
+                    ],
+                    'CompanyShortName' => '8Q'
+                ],
+                'MarketingCabin'    => [
+                    '_'         => '',
+                    'CabinType' => 'Y',
+                    'RPH'       => 1
+                ],
+                'BookingClassAvail' => [
+                    '_'                    => '',
+                    'ResBookDesigCode'     => 'D', //
+                    'RPH'                  => 1,
+                    'ResBookDesigQuantity' => 9 //
+                ],
+                'comment'           => '',
+                //],
+                'DepartureDateTime' => '2015-08-25 14:55:00.0', //
+                'ArrivalDateTime'   => '2015-08-25 19:25:00.0', //
+                'OnTimeRate'        => 1,
+                'JourneyDuration'   => 1,
+                'ResBookDesigID'    => 633552, //
+                'ResBookDesigCode'  => 'DINTEFLX', //
+                'Ticket'            => 1,
+                'StopQuantity'      => 0,
+                'FlightNumber'      => 372, //
+            ]
+        ];
+        $request['AirItinerary']['OriginDestinationOptions']['OriginDestinationOption'] = $flightSegment;
+
+        $request['TravelerInfo'] = [
+            'AirTraveler'       => [
+                'PassengerTypeCode' => 'ADT',
+                'TicketNumber'      => 1225, //?
+                'ProfileRef'        => [
+                    'UniqueID' => [
+                        '_'        => '',
+                        'Type'     => 1,
+                        'Instance' => 1,
+                        'URL'      => 1,
+                        'ID'       => 1
+                    ]
+                ],
+                'PersonName'        => [ //
+                    'NamePrefix' => 'Mr',
+                    'GivenName'  => 'John',
+                    'Surname'    => 'Doe',
+                    'NameTitle'  => ''
+                ],
+                'Telephone'         => [
+                    '_'            => '',
+                    'AreaCityCode' => '+31 6',
+                    'PhoneNumber'  => '12345678'
+                ],
+                'Email'             => 'info@example.com',
+                'Document'          => [
+                    'DocHolderName'     => '',
+                    'BirthDate'         => '1970-01-01', //
+                    'DocID'             => '102938455', //
+                    'Gender'            => 'M', //
+                    'ExpireDate'        => '1',
+                    'EffectiveDate'     => '1',
+                    'DocType'           => '1',
+                    'DocIssueAuthority' => '1',
+                    'DocIssueLocation'  => '1'
+                ]
+            ],
+            'SpecialReqDetails' => [
+                'SeatRequests'           => [
+                    'item' => [
+                        '_'                        => '',
+                        'FlightRefNumberRPHList'   => 1,
+                        'SeatNumber'               => 1,
+                        'TravelerRefNumberRPHList' => 1
+                    ]
+                ],
+                'SpecialServiceRequests' => [
+                    'SpecialServiceRequest' => [
+                        'Airline'                => 'HOLIDAYXML',
+                        'text'                   => '4000002434',
+                        'SSRCode'                => 'BILL',
+                        'FlightRefNumberRPHList' => 1
+                    ]
+                ]
+            ]
+        ];
+
+        $pre_request = $request + [
+                'ExtTransactionID' => time(),
+                'SequenceNmbr'     => 1,
+                'TimeStamp'        => 1,
+                'Ticketing' => [
+                    '_' => '',
+                    'TicketType' => 1
+                ]
+            ];
+
+//        dd($pre_request);
+
+        return $pre_request;
     }
 }

@@ -69,4 +69,9 @@ class OTAToDataFormatter
 
         return $decrypted_data;
     }
+
+    public function forBooking($data)
+    {
+//        dd($data);
+    }
 }

@@ -8,7 +8,7 @@
 namespace mamorunl\OTA\Models;
 
 
-use mamorunl\OTA\Facades\OTAToDataFormatter;
+use mamorunl\OTA\Facades\OTAToDataFormatter as Formatter;
 
 class OTAHandler
 {
@@ -16,13 +16,25 @@ class OTAHandler
     {
         $client = $connection->getConnection();
 
-        return OTAToDataFormatter::forAvailability($client->Availability($data));
+        return Formatter::forAvailability($client->Availability($data));
     }
 
     public function fareDisplay(OTAConnection $connection, $data, $flight_data)
     {
         $client = $connection->getConnection();
 
-        return OTAToDataFormatter::forFareDisplay($client->FareDisplay($data), $flight_data);
+        return Formatter::forFareDisplay($client->FareDisplay($data), $flight_data);
+    }
+
+    public function booking(OTAConnection $connection, $data)
+    {
+        $client = $connection->getConnection();
+
+        try {
+            Formatter::forBooking($client->Booking($data));
+        } catch(\Exception $e) {
+            echo $e->getMessage();
+            dd($client->__getLastRequest());
+        }
     }
 }

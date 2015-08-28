@@ -71,7 +71,7 @@
 
 <div class="form-group{{ $errors->has('flight_type') ? ' has-error' : '' }}">
     {!! Form::label('flight_type', trans('mamorunl-ota::flight.fields.flight_type')) !!}
-    {!! Form::text('flight_type', null, ['class' => 'form-control']) !!}
+    {!! Form::select('flight_type', [0 => trans('mamorunl-ota::flight.fields.types.one_way'), 1 => trans('mamorunl-ota::flight.fields.types.return')], null, ['class' => 'form-control']) !!}
     @if($errors->has('flight_type'))
         <div class="help-block">
             {!! $errors->first('flight_type') !!}
