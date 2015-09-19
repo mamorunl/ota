@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use mamorunl\OTA\Facades\DataToOTAFormatter;
 use mamorunl\OTA\Facades\OTA;
@@ -51,9 +52,10 @@ class OTAFlightController extends Controller
             ]
         ];
 
-        switch($request->get('flight_type')) {
+        switch ($request->get('flight_type')) {
             case 0:
-                $encrypted_data = OTA::oneWayFlight($ota_connection, DataToOTAFormatter::forAvailability($request_data));
+                $encrypted_data = OTA::oneWayFlight($ota_connection,
+                    DataToOTAFormatter::forAvailability($request_data));
                 break;
             case 1:
                 $request_data['date_return'] = date('Y-m-d', strtotime($request_data['date_return']));
@@ -62,7 +64,6 @@ class OTAFlightController extends Controller
             default:
                 throw new Exception('Oops! This flight type was not supported');
         }
-
 
 
         return Redirect::route('ota.flight.display_result',
@@ -81,7 +82,7 @@ class OTAFlightController extends Controller
         $data = OTAToDataFormatter::decrypt($request->get('d'));
 
         // Return the view for a return flight
-        if(count($data) == 2) {
+        if (count($data) == 2) {
             return view('mamorunl-ota::flight.display_return',
                 ['flight_data' => $data, 'd' => $request->get('d'), 't' => $request->get('t')]);
         }
@@ -100,9 +101,22 @@ class OTAFlightController extends Controller
      */
     public function book(Request $request)
     {
-        $flight_data = OTAToDataFormatter::decryptFromURL($request->get('d'));
-        $person_data = OTAToDataFormatter::decryptFromURL($request->get('t'));
+        $flight_data = OTAToDataFormatter::decrypt($request->get('d'));
+        $person_data = OTAToDataFormatter::decrypt($request->get('t'));
 
+        // Return the view for a return flight
+        if (count($flight_data) == 2) {
+            return view('mamorunl-ota::flight.book_return', [
+                'flight_data'  => $flight_data,
+                'person_data'  => $person_data,
+                'd'            => $request->get('d'),
+                't'            => $request->get('t'),
+                'row_letter_t' => OTAToDataFormatter::decrypt($request->get('row_letter_t')),
+                'row_letter_b' => OTAToDataFormatter::decrypt($request->get('row_letter_b'))
+            ]);
+        }
+
+        // Display a one way flight
         return view('mamorunl-ota::flight.book', [
             'flight_data' => $flight_data,
             'person_data' => $person_data,
@@ -157,11 +171,12 @@ class OTAFlightController extends Controller
                 $infants = $this->generatePerson('infant', $request, $booking, $person_data);
 
                 Mail::send('mamorunl-ota::flight.emails.book',
-                    ['booking'     => $booking,
-                     'adults'      => $adults,
-                     'children'    => $children,
-                     'infants'     => $infants,
-                     'flight_data' => $flight_data
+                    [
+                        'booking'     => $booking,
+                        'adults'      => $adults,
+                        'children'    => $children,
+                        'infants'     => $infants,
+                        'flight_data' => $flight_data
                     ],
                     function ($message) use ($adults) {
                         $message->to($adults[0]->email, $adults[0]->first_name . " " . $adults[0]->last_name);
@@ -174,6 +189,7 @@ class OTAFlightController extends Controller
             die();
             echo $e->getMessage();
             dd($e->getTrace());
+
             return Redirect::back()
                 ->withInput();
         }

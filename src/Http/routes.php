@@ -25,12 +25,12 @@ $router->post('flight/price', [
     'uses' => 'OTAAjaxFlightController@priceListPerRow'
 ]);
 
-$router->get('flight/book', [
+$router->post('flight/book', [
     'as'   => 'ota.flight.book',
     'uses' => 'OTAFlightController@book'
 ]);
 
-$router->post('flight/book', [
+$router->post('flight/confirm-booking', [
     'as' => 'ota.flight.handle-booking',
     'uses' => 'OTAFlightController@handleBooking'
 ]);

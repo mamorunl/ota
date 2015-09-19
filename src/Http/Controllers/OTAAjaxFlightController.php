@@ -10,6 +10,7 @@ namespace mamorunl\OTA\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use mamorunl\OTA\Facades\DataToOTAFormatter;
 use mamorunl\OTA\Facades\OTA;
 use mamorunl\OTA\Facades\OTAToDataFormatter;
@@ -43,30 +44,10 @@ class OTAAjaxFlightController extends Controller
             }
         }
 
-
         $price_list = $this->calculateTotalPrice($returned_data, $person_data);
 
         echo json_encode($price_list);
         die();
-//        $decrypted_data = OTAToDataFormatter::decrypt($request->get('d'));
-//        dd($decrypted_data);
-//        $flight_data = $decrypted_data[(int)$request->get('flight_id')];
-//        $person_data = OTAToDataFormatter::decrypt($request->get('t'));
-//        $rows = $flight_data['seats_free'];
-//
-//        // @TODO: Make dynamic
-//
-//        $price_list_from_ota = OTA::fareDisplay($ota_connection, DataToOTAFormatter::forFareDisplay($date_departure, $airport_from, $airport_to, $flight_number), $flight_data);
-//        $price_list = $this->calculateTotalPrice($price_list_from_ota, $person_data);
-//        asort($price_list, SORT_NUMERIC);
-//
-//        foreach ($price_list as $row => $price) {
-//            $seats_free = $rows[$row];
-//
-//            $new_data = OTAToDataFormatter::encrypt($flight_data + ['price' => $price, 'row_letter' => $row]);
-//            echo "<div>" . $row . ": " . $seats_free . " free - &euro; " . $price . ".00 <a href=\"" . route('ota.flight.book',
-//                    ['d' => $new_data, 't' => $request->get('t')]) . "\">BOOK NOW</a></div>";
-//        }
     }
 
     private function calculateTotalPrice($price_list, $person_data)
@@ -75,16 +56,17 @@ class OTAAjaxFlightController extends Controller
         foreach($price_list as $row_letter => $prices_per_person_type) {
             foreach($prices_per_person_type as $type_identifier => $price_per_type) {
                 if(!isset($prices_per_row[$row_letter])) {
-                    $prices_per_row[$row_letter] = 0;
+                    $prices_per_row[$row_letter]['price'] = 0;
                 }
                 switch($type_identifier) {
-                    case "ADT": $prices_per_row[$row_letter] += ($price_per_type*$person_data['num_adults']);
+                    case "ADT": $prices_per_row[$row_letter]['price'] += ($price_per_type*$person_data['num_adults']);
                         break;
-                    case "CHD": $prices_per_row[$row_letter] += ($price_per_type*$person_data['num_children']);
+                    case "CHD": $prices_per_row[$row_letter]['price'] += ($price_per_type*$person_data['num_children']);
                         break;
-                    case "INF": $prices_per_row[$row_letter] += ($price_per_type*$person_data['num_infants']);
+                    case "INF": $prices_per_row[$row_letter]['price'] += ($price_per_type*$person_data['num_infants']);
                         break;
                 }
+                $prices_per_row[$row_letter]['encoded'] = OTAToDataFormatter::encrypt(['row_letter' => $row_letter, 'price' => $prices_per_row[$row_letter]['price']]);
             }
         }
         return $prices_per_row;
