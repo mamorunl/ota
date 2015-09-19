@@ -24,24 +24,49 @@ class OTAAjaxFlightController extends Controller
      */
     public function priceListPerRow(Request $request)
     {
-        $decrypted_data = OTAToDataFormatter::decryptFromURL($request->get('d'));
-        $flight_data = $decrypted_data[(int)$request->get('flight_id')];
-        $person_data = OTAToDataFormatter::decryptFromURL($request->get('t'));
-        $rows = $flight_data['seats_free'];
-
-        // @TODO: Make dynamic
         $ota_connection = new OTAConnection('onur');
-        $price_list_from_ota = OTA::fareDisplay($ota_connection, DataToOTAFormatter::forFareDisplay($flight_data), $flight_data);
-        $price_list = $this->calculateTotalPrice($price_list_from_ota, $person_data);
-        asort($price_list, SORT_NUMERIC);
 
-        foreach ($price_list as $row => $price) {
-            $seats_free = $rows[$row];
+        $date_departure = $request->get('departure_dt');
+        $airport_from = $request->get('airport_from');
+        $airport_to = $request->get('airport_to');
+        $flight_number = $request->get('flight_number');
 
-            $new_data = OTAToDataFormatter::encryptFromURL($flight_data + ['price' => $price, 'row_letter' => $row]);
-            echo "<div>" . $row . ": " . $seats_free . " free - &euro; " . $price . ".00 <a href=\"" . route('ota.flight.book',
-                    ['d' => $new_data, 't' => $request->get('t')]) . "\">BOOK NOW</a></div>";
+        $returned_data = OTA::fareDisplay($ota_connection, DataToOTAFormatter::forFareDisplay($date_departure, $airport_from, $airport_to, $flight_number));
+
+        $seats_free = unserialize($request->get('row_data'));
+
+        $person_data = OTAToDataFormatter::decrypt($request->get('t'));
+
+        foreach ($seats_free as $letter => $number_of_seats_free) {
+            if($number_of_seats_free == 0) {
+                unset($returned_data[$letter]);
+            }
         }
+
+
+        $price_list = $this->calculateTotalPrice($returned_data, $person_data);
+
+        echo json_encode($price_list);
+        die();
+//        $decrypted_data = OTAToDataFormatter::decrypt($request->get('d'));
+//        dd($decrypted_data);
+//        $flight_data = $decrypted_data[(int)$request->get('flight_id')];
+//        $person_data = OTAToDataFormatter::decrypt($request->get('t'));
+//        $rows = $flight_data['seats_free'];
+//
+//        // @TODO: Make dynamic
+//
+//        $price_list_from_ota = OTA::fareDisplay($ota_connection, DataToOTAFormatter::forFareDisplay($date_departure, $airport_from, $airport_to, $flight_number), $flight_data);
+//        $price_list = $this->calculateTotalPrice($price_list_from_ota, $person_data);
+//        asort($price_list, SORT_NUMERIC);
+//
+//        foreach ($price_list as $row => $price) {
+//            $seats_free = $rows[$row];
+//
+//            $new_data = OTAToDataFormatter::encrypt($flight_data + ['price' => $price, 'row_letter' => $row]);
+//            echo "<div>" . $row . ": " . $seats_free . " free - &euro; " . $price . ".00 <a href=\"" . route('ota.flight.book',
+//                    ['d' => $new_data, 't' => $request->get('t')]) . "\">BOOK NOW</a></div>";
+//        }
     }
 
     private function calculateTotalPrice($price_list, $person_data)

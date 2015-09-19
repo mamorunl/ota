@@ -34,24 +34,20 @@ class OTAToDataFormatter
             $data[0]['seats_free'][$row_data->ResBookDesigCode] = $row_data->ResBookDesigQuantity;
         }
 
-        return $this->encryptFromURL($data);
+        return $data;
     }
 
-    public function forFareDisplay($data, $flight_data)
+    public function forFareDisplay($data)
     {
         $fare = [];
         foreach ($data->FareDisplayInfos->FareDisplayInfo as $prices_from_ota) {
-            foreach ($flight_data['seats_free'] as $row => $number_free) {
-                if ($row == $prices_from_ota->ResBookDesigCode && $number_free > 0) {
-                    $fare[$row][$prices_from_ota->PricingInfo->PassengerTypeCode] = $prices_from_ota->PricingInfo->TotalFare->Amount;
-                }
-            }
+            $fare[$prices_from_ota->ResBookDesigCode][$prices_from_ota->PricingInfo->PassengerTypeCode] = $prices_from_ota->PricingInfo->TotalFare->Amount;
         }
 
         return $fare;
     }
 
-    public function encryptFromURL($data)
+    public function encrypt($data)
     {
         $flight_data = json_encode($data);
         $encrypted_data = urlencode(base64_encode(mcrypt_encrypt(MCRYPT_BLOWFISH, Config::get('app.key'), $flight_data,
@@ -60,7 +56,7 @@ class OTAToDataFormatter
         return $encrypted_data;
     }
 
-    public function decryptFromURL($data)
+    public function decrypt($data)
     {
         $encrypted_data = base64_decode(urldecode($data));
         $decrypted_data = json_decode(mcrypt_decrypt(MCRYPT_BLOWFISH, Config::get('app.key'), $encrypted_data,

@@ -13,7 +13,7 @@ use stdClass;
 
 class DataToOTAFormatter
 {
-    public function forAvailability($data)
+    public function forAvailability($date_arrival, $airport_from, $airport_to, array $traveler_info)
     {
         $request = [
             'POS'                          => [
@@ -23,14 +23,14 @@ class DataToOTAFormatter
                 ]
             ],
             'OriginDestinationInformation' => [
-                'DepartureDateTime'   => $data['date_arrival'],
+                'DepartureDateTime'   => $date_arrival,
                 'OriginLocation'      => [
                     '_'            => '',
-                    'LocationCode' => $data['airport_from']
+                    'LocationCode' => $airport_from
                 ],
                 'DestinationLocation' => [
                     '_'            => '',
-                    'LocationCode' => $data['airport_to']
+                    'LocationCode' => $airport_to
                 ]
             ],
             'TravelPreferences'            => [
@@ -60,9 +60,9 @@ class DataToOTAFormatter
             ]
         ];
 
-        if (is_array($data['traveller_info']) && count($data['traveller_info']) > 0) {
+        if (is_array($traveler_info) && count($traveler_info) > 0) {
             $request['TravelerInfoSummary']['AirTravelerAvail'] = [];
-            foreach ($data['traveller_info'] as $person) {
+            foreach ($traveler_info as $person) {
                 $personObject = new \StdClass;
                 $personObject->Quantity = $person['quantity'];
                 $personObject->Code = $person['code'];
@@ -74,7 +74,7 @@ class DataToOTAFormatter
         return $request;
     }
 
-    public function forFareDisplay($flight_data)
+    public function forFareDisplay($date_departure, $airport_from, $airport_to, $flight_number)
     {
         $request['POS'] = [];
         $newClass = new StdClass;
@@ -105,22 +105,22 @@ class DataToOTAFormatter
             ]
         ];
 
-        $date_departure = Carbon::createFromFormat('Y-m-d H:i:s', $flight_data['date_departure'])
+        $date_departure = Carbon::createFromFormat('Y-m-d H:i:s', $date_departure)
             ->toDateString();
         $request['OriginDestinationInformation'] = [
             "DepartureDateTime"   => $date_departure,
             "OriginLocation"      => [
                 "_"            => '',
-                "LocationCode" => $flight_data['airport_from']
+                "LocationCode" => $airport_from
             ],
             "DestinationLocation" => [
                 "_"            => "",
-                "LocationCode" => $flight_data['airport_to']
+                "LocationCode" => $airport_to
             ]
         ];
 
         $request['SpecificFlightInfo'] = [
-            "FlightNumber"     => $flight_data['flight_number'],
+            "FlightNumber"     => $flight_number,
             "BookingClassPref" =>
                 [
                     "_"                => "",

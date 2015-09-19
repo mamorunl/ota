@@ -51,10 +51,22 @@ class OTAFlightController extends Controller
             ]
         ];
 
-        $encrypted_data = OTA::availability($ota_connection, DataToOTAFormatter::forAvailability($request_data));
+        switch($request->get('flight_type')) {
+            case 0:
+                $encrypted_data = OTA::oneWayFlight($ota_connection, DataToOTAFormatter::forAvailability($request_data));
+                break;
+            case 1:
+                $request_data['date_return'] = date('Y-m-d', strtotime($request_data['date_return']));
+                $encrypted_data = OTA::returnFlight($request_data);
+                break;
+            default:
+                throw new Exception('Oops! This flight type was not supported');
+        }
+
+
 
         return Redirect::route('ota.flight.display_result',
-            ['d' => $encrypted_data, 't' => OTAToDataFormatter::encryptFromURL($request_data)]);
+            ['d' => $encrypted_data, 't' => OTAToDataFormatter::encrypt($request_data)]);
     }
 
     /**
@@ -66,8 +78,15 @@ class OTAFlightController extends Controller
      */
     public function result(Request $request)
     {
-        $data = OTAToDataFormatter::decryptFromURL($request->get('d'));
+        $data = OTAToDataFormatter::decrypt($request->get('d'));
 
+        // Return the view for a return flight
+        if(count($data) == 2) {
+            return view('mamorunl-ota::flight.display_return',
+                ['flight_data' => $data, 'd' => $request->get('d'), 't' => $request->get('t')]);
+        }
+
+        // Display a one way flight
         return view('mamorunl-ota::flight.display',
             ['flights' => $data, 'd' => $request->get('d'), 't' => $request->get('t')]);
     }
