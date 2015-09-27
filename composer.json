@@ -1,6 +1,6 @@
 {
-  "name": "laravel/laravel",
-  "description": "The Laravel Framework.",
+  "name": "mamorunl/ota",
+  "description": "OTA Handler with script",
   "keywords": [
     "framework",
     "laravel"
@@ -19,11 +19,7 @@
     "phpspec/phpspec": "~2.1"
   },
   "autoload": {
-    "classmap": [
-      "database"
-    ],
     "psr-4": {
-      "App\\": "app/",
       "mamorunl\\OTA\\": "src/"
     }
   },
