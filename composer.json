@@ -1,6 +1,6 @@
 {
-  "name": "laravel/laravel",
-  "description": "The Laravel Framework.",
+  "name": "mamorunl/ota",
+  "description": "OTA Handler with script",
   "keywords": [
     "framework",
     "laravel"
