@@ -127,8 +127,8 @@ class OTAFlightController extends Controller
 
     public function handleBooking(Request $request)
     {
-        $flight_data = OTAToDataFormatter::decryptFromURL($request->get('d'));
-        $person_data = OTAToDataFormatter::decryptFromURL($request->get('t'));
+        $flight_data = OTAToDataFormatter::decrypt($request->get('d'));
+        $person_data = OTAToDataFormatter::decrypt($request->get('t'));
         $validator = Validator::make($request->all(), []);
 
         $validator->each('first_name_adult', ['required']);
@@ -186,9 +186,10 @@ class OTAFlightController extends Controller
 
             });
         } catch (Exception $e) {
-            die();
-            echo $e->getMessage();
+            //die();
+            //echo $e->getMessage();
             dd($e->getTrace());
+            die();
 
             return Redirect::back()
                 ->withInput();

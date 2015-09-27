@@ -8,7 +8,7 @@
 namespace mamorunl\OTA\Models;
 
 
-use mamorunl\OTA\Facades\DataToOTAFormatter;
+use mamorunl\OTA\Facades\DataToOTAFormatter as DataOTAFormatter;
 use mamorunl\OTA\Facades\OTAToDataFormatter as Formatter;
 
 class OTAHandler
@@ -26,9 +26,9 @@ class OTAHandler
 
         $client = $connection->getConnection();
 
-        $flight_to_string = DataToOTAFormatter::forAvailability($data['date_arrival'], $data['airport_from'], $data['airport_to'], $data['traveller_info']);
+        $flight_to_string = DataOTAFormatter::forAvailability($data['date_arrival'], $data['airport_from'], $data['airport_to'], $data['traveller_info']);
 
-        $flight_from_string = DataToOTAFormatter::forAvailability($data['date_return'], $data['airport_to'], $data['airport_from'], $data['traveller_info']);
+        $flight_from_string = DataOTAFormatter::forAvailability($data['date_return'], $data['airport_to'], $data['airport_from'], $data['traveller_info']);
 
         $flight_to = Formatter::forAvailability($client->Availability($flight_to_string));
 

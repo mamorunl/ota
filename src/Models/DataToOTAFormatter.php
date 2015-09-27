@@ -250,10 +250,11 @@ class DataToOTAFormatter
                 ],
                 'SpecialServiceRequests' => [
                     'SpecialServiceRequest' => [
-                        'Airline'                => 'HOLIDAYXML',
-                        'text'                   => '4000002434',
-                        'SSRCode'                => 'BILL',
-                        'FlightRefNumberRPHList' => 1
+                        'Airline'                  => 'HOLIDAYXML',
+                        'text'                     => '4000002434',
+                        'SSRCode'                  => 'BILL',
+                        'FlightRefNumberRPHList'   => 1,
+                        'TravelerRefNumberRPHList' => 1
                     ]
                 ]
             ]
@@ -263,8 +264,8 @@ class DataToOTAFormatter
                 'ExtTransactionID' => time(),
                 'SequenceNmbr'     => 1,
                 'TimeStamp'        => 1,
-                'Ticketing' => [
-                    '_' => '',
+                'Ticketing'        => [
+                    '_'          => '',
                     'TicketType' => 1
                 ]
             ];
