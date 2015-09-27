@@ -13,6 +13,6 @@ use Illuminate\Support\Facades\Facade;
 class DataToOTAFormatter extends Facade {
     public static function getFacadeAccessor()
     {
-        return 'mamorunl\OTA\models\DataToOTAFormatter';
+        return 'mamorunl\OTA\Models\DataToOTAFormatter';
     }
 }
