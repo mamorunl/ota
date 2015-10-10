@@ -20,7 +20,76 @@
 
     <div class="col-md-4">
         <h2>@lang('mamorunl-ota::flight.book.flight_information')</h2>
-        <div class="row">
+        @foreach($flight_data as $id => $flight)
+            <h2>
+                <i class="fa fa-arrow-right"></i> {{ trans('mamorunl-ota::flight.display.flight_information') }} {{ $flight['airline_code'] }} {{ $flight['flight_number'] }}
+                : {{ $flight['date_departure'] }}</h2>
+            <h3>{{ trans('soap.availability.flight_info') }}</h3>
+            <div class="row">
+                <div class="col-md-8">
+                    @lang('mamorunl-ota::flight.fields.flight_number')
+                </div>
+                <div class="col-md-4">
+                    {{ $flight['airline_code'] }}{{ $flight['flight_number'] }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    @lang('mamorunl-ota::flight.fields.airport_from')
+                </div>
+                <div class="col-md-4">
+                    {{ $flight['airport_from'] }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    @lang('mamorunl-ota::flight.fields.airport_to')
+                </div>
+                <div class="col-md-4">
+                    {{ $flight['airport_to'] }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    @lang('mamorunl-ota::flight.fields.date_departure')
+                </div>
+                <div class="col-md-4">
+                    {{ $flight['date_departure'] }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    @lang('mamorunl-ota::flight.fields.date_arrival')
+                </div>
+                <div class="col-md-4">
+                    {{ $flight['date_arrival'] }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    @lang('mamorunl-ota::flight.fields.row')
+                </div>
+                <div class="col-md-4">
+                    {{ $row_letter_t['row_letter'] }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    @lang('mamorunl-ota::flight.book.total_price')
+                </div>
+
+                <div class="col-md-4">
+                    &euro; {{ number_format($row_letter_t['price'], 2, ",", ".") }}
+                </div>
+            </div>
+        @endforeach
+        {{--<div class="row">
             <div class="col-md-8">
                 @lang('mamorunl-ota::flight.fields.flight_number')
             </div>
@@ -82,7 +151,7 @@
             <div class="col-md-4">
                 &euro; {{ number_format($flight_data['price'], 2, ",", ".") }}
             </div>
-        </div>
+        </div>--}}
     </div>
 </div>
 

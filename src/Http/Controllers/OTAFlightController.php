@@ -36,8 +36,8 @@ class OTAFlightController extends Controller
 
     public function postSearch(Request $request)
     {
-        $ota_connection = new OTAConnection('onur');
         $request_data = $request->all();
+
         $request_data['date_arrival'] = date('Y-m-d', strtotime($request_data['date_arrival']));
 
         $request_data['traveller_info'] = [
@@ -53,8 +53,7 @@ class OTAFlightController extends Controller
 
         switch ($request->get('flight_type')) {
             case 0:
-                $encrypted_data = OTA::oneWayFlight($ota_connection,
-                    DataToOTAFormatter::forAvailability($request_data));
+                $encrypted_data = OTA::oneWayFlight($request_data);
                 break;
             case 1:
                 $request_data['date_return'] = date('Y-m-d', strtotime($request_data['date_return']));
@@ -120,7 +119,8 @@ class OTAFlightController extends Controller
             'flight_data' => $flight_data,
             'person_data' => $person_data,
             'd'           => $request->get('d'),
-            't'           => $request->get('t')
+            't'           => $request->get('t'),
+            'row_letter_t' => OTAToDataFormatter::decrypt($request->get('row_letter_t'))
         ]);
     }
 

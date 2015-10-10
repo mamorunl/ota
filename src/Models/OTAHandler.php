@@ -13,11 +13,17 @@ use mamorunl\OTA\Facades\OTAToDataFormatter as Formatter;
 
 class OTAHandler
 {
-    public function oneWayFlight(OTAConnection $connection, $data)
+    public function oneWayFlight($data)
     {
+        $connection = new OTAConnection('onur');
+
         $client = $connection->getConnection();
 
-        return Formatter::encrypt(Formatter::forAvailability($client->Availability($data)));
+        $flight_string = DataOTAFormatter::forAvailability($data['date_arrival'], $data['airport_from'], $data['airport_to'], $data['traveller_info']);
+
+        $flight = Formatter::forAvailability($client->Availability($flight_string));
+
+        return Formatter::encrypt($flight);
     }
 
     public function returnFlight($data)
